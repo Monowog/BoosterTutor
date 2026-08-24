@@ -1,0 +1,25 @@
+﻿# secrets — never commit these
+.env
+.env.local
+.env.*.local
+*.pem
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# node
+node_modules/
+.svelte-kit/
+build/
+.vercel/
+
+# data + os
+data/raw/
+*.csv.gz
+.DS_Store
+Thumbs.db

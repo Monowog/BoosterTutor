@@ -1,0 +1,24 @@
+# BoosterTutor
+
+**WHAT:** LLM-based Magic: the Gathering Limited coach. Two features: Draft Review (17Lands draft log → a short critique of each of the 45 picks) and Deck Review (deck + sideboard → build critique and ranked swap suggestions). Advice blends format-level meta (archetype/colour strength) with card-specific synergy.
+
+**WHY:** First production web app for a novice-to-web-dev developer. Full phased plan lives in `/docs/development_plan.md` — check it for the current phase before starting work; don't jump ahead to later phases uninvited.
+
+**HOW / Stack:**
+- **Frontend:** SvelteKit + TypeScript + Tailwind CSS (not React/Next), deployed on Vercel at `boostertutor.dev`.
+- **Backend:** Python 3.12 + FastAPI, managed with `uv`, deployed on Render at `api.boostertutor.dev`. Owns all parsing, analysis, ingestion, and Claude calls.
+- **Database:** Postgres on Supabase, via SQLAlchemy 2.0 + Alembic migrations.
+- **Auth:** Supabase Auth (email magic link + Google). SvelteKit holds the session cookie; FastAPI verifies the JWT against Supabase's JWKS. Accounts + saved review history.
+- **LLM:** Anthropic Claude API — `claude-sonnet-5` primary, `claude-haiku-4-5-20251001` for cheap classification. Key lives in backend env vars only, never committed.
+- **Card data:** Scryfall bulk data (oracle text, images, mana cost, rarity) + 17Lands (ALSA, ATA, GIH WR, IWD, colour-pair and archetype-scoped win rates), pulled by `api/src/boostertutor/ingest/scryfall.py` and `ingest/seventeen_lands.py` into `cards` / `card_prints` / `card_draft_stats` / `card_archetype_stats` / `archetype_stats`. Refreshed nightly by a GitHub Actions cron job.
+
+**Core architectural rule:** Python computes every fact and every verdict; Claude only explains them in prose. No statistic may appear in output that was not passed into the prompt. `parsing/` and `analysis/` stay pure — no network, no DB, no clock — so they can be tested exhaustively.
+
+**Conventions:**
+- Small, frequent commits, Conventional Commits style. Feature branches → PR → `main`. `main` stays deployable at all times; CI must pass to merge.
+- Prefer plain, well-commented code over clever code — explain non-obvious choices, since I'm learning web dev as we go.
+- Confirm before big architectural changes (schema changes, new dependencies, deploy config); proceed on your own for routine work (formatting, small fixes, tests).
+- Record real decisions as short files in `docs/decisions/`. Prompts are versioned files in `docs/prompts/` and are never edited in place.
+- Be a good citizen with 17Lands: cached snapshots only, at most one request per set/format/day, identifying User-Agent, never called from a user request path.
+
+**Current phase:** Phase 0 — Environment, accounts, and Git. Update this line as phases complete; see `/docs/development_plan.md`.
