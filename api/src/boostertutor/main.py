@@ -1,7 +1,11 @@
 """FastAPI application entry point for the BoosterTutor API."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+
+from .config import settings
+from .db import engine
 
 app = FastAPI(title="BoosterTutor API", version="0.1.0")
 
@@ -12,7 +16,7 @@ app = FastAPI(title="BoosterTutor API", version="0.1.0")
 # arbitrary websites from calling your API with a logged-in user's credentials.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[settings.frontend_origin],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,4 +26,20 @@ app.add_middleware(
 @app.get("/health")
 def health() -> dict[str, str]:
     """Liveness check. Render pings this; so will you, constantly, while debugging."""
+    return {"status": "ok"}
+
+
+@app.get("/health/db")
+def health_db() -> dict[str, str]:
+    """Confirms the database is reachable. Returns 503 if not."""
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception as exc:
+        # Leaking the driver's error is a dev convenience, not production
+        # behaviour - Phase 8 replaces this with a log line and a generic
+        # message, since error text can disclose hostnames and usernames.
+        raise HTTPException(
+            status_code=503, detail=f"database unreachable: {exc}"
+        ) from exc
     return {"status": "ok"}
