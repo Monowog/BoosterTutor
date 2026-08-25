@@ -16,7 +16,7 @@ app = FastAPI(title="BoosterTutor API", version="0.1.0")
 # arbitrary websites from calling your API with a logged-in user's credentials.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_origin],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
