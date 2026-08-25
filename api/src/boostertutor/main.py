@@ -1,4 +1,4 @@
-﻿"""FastAPI application entry point for the BoosterTutor API."""
+"""FastAPI application entry point for the BoosterTutor API."""
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
