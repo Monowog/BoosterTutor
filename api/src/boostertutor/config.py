@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str
-    frontend_origin: str = "http://localhost:5173"
+    frontend_origins: str = "http://localhost:5173"
 
     @property
     def sqlalchemy_url(self) -> str:
@@ -20,6 +20,13 @@ class Settings(BaseSettings):
             if url.startswith(prefix):
                 return url.replace(prefix, "postgresql+psycopg://", 1)
         return url
+
+    @property
+    def cors_origins(self) -> list[str]:
+        """Comma-separated in the environment, list in code. Declaring this as
+        list[str] directly would make pydantic-settings try to JSON-parse the
+        env var, which fails on a plain comma-separated string."""
+        return [o.strip() for o in self.frontend_origins.split(",") if o.strip()]
 
 
 settings = Settings()
