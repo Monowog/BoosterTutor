@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str
-    frontend_origins: str = "http://localhost:5173"
+    frontend_origins: str = ("http://localhost:5173",)
 
     @property
     def sqlalchemy_url(self) -> str:

@@ -161,7 +161,7 @@ A "session" is a focused 2–3 hour block. Expect the early phases to take longe
 
 ---
 
-## Phase 0 — Environment, accounts, and Git
+## Phase 0 — Environment, accounts, and Git (COMPLETE)
 
 Goal: a machine that can build and ship software, and a repository on GitHub with your first commit in it.
 
@@ -302,7 +302,7 @@ Open the project folder in VS Code (`code .` from the project directory) and ins
 
 ---
 
-## Phase 1 — Walking skeleton, deployed
+## Phase 1 — Walking skeleton, deployed (COMPLETE)
 
 Goal: the thinnest possible version of the real system — browser → SvelteKit → FastAPI → Postgres — running on the real internet at your real domain. No features. Just proof that the pipes connect.
 
