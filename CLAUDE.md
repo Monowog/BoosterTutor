@@ -21,4 +21,4 @@
 - Record real decisions as short files in `docs/decisions/`. Prompts are versioned files in `docs/prompts/` and are never edited in place.
 - Be a good citizen with 17Lands: cached snapshots only, at most one request per set/format/day, identifying User-Agent, never called from a user request path.
 
-**Current phase:** Phase 0 — Environment, accounts, and Git. Update this line as phases complete; see `/docs/development_plan.md`.
+**Current phase:** Phase 2 — Schema for cards and 17Lands statistics, the Scryfall bulk ingest, and the 17Lands data work. Update this line as phases complete; see `/docs/development_plan.md`.

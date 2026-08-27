@@ -36,7 +36,7 @@ jobs:
     env:
       # $env/static/public is resolved at build time, so the build fails
       # without this - same reason the dev server needed .env.
-      PUBLIC_API_URL: https://boostertutor-api.onrender.com
+      PUBLIC_API_URL: https://api.boostertutor.dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
