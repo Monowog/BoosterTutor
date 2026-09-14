@@ -22,3 +22,17 @@
 - Be a good citizen with 17Lands: cached snapshots only, at most one request per set/format/day, identifying User-Agent, never called from a user request path.
 
 **Current phase:** Phase 2 — Schema for cards and 17Lands statistics, the Scryfall bulk ingest, and the 17Lands data work. Update this line as phases complete; see `/docs/development_plan.md`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues for `Monowog/BoosterTutor`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/decisions/` (this repo's existing decision-record convention, used in place of `docs/adr/`) at the repo root. See `docs/agents/domain.md`.
