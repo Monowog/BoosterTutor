@@ -1,7 +1,7 @@
 # Research: "The Hobbit" set code + 17Lands data availability
 
 **Ticket:** [Monowog/BoosterTutor#14](https://github.com/Monowog/BoosterTutor/issues/14)
-**Date checked:** 2026-09-14
+**Date checked:** 2026-09-14 · **Corrected:** 2026-09-15 (§3 data-availability findings were wrong — see the note there)
 **Context:** `docs/decisions/0003-pick-grading.md` (fitness function + backtest), `docs/development_plan.md` §2.3 (17Lands access etiquette)
 
 ---
@@ -37,27 +37,61 @@ Checked `17lands.com`'s public aggregate JSON endpoints directly (no browser net
 
 **Answer: yes, 17Lands publishes data for HOB in both Traditional Draft and Premier Draft**, at both the card-rating and color/archetype-rating granularity. QuickDraft also has data but isn't relevant per the dev plan's scope.
 
-## 3. Sample size / freshness — thin, as expected for a 1-month-old set
+## 3. Sample size / freshness — **CORRECTED 2026-09-15: not thin**
 
-HOB released 2026-08-14; today is 2026-09-14 — the set is exactly one month old. Data is present but visibly thin, especially for the win-rate fields the fitness function needs most:
+> **This section originally concluded that HOB was a data-thin set and that Traditional
+> Draft had no card-level GIH WR at all. Both conclusions were wrong**, and the
+> Premier Draft format decision rested on the second one. Corrected below; see
+> [#14](https://github.com/Monowog/BoosterTutor/issues/14) and
+> `docs/data-sources.md` in [Monowog/DraftDouble](https://github.com/Monowog/DraftDouble).
 
-**Premier Draft** (`/card_ratings/data?expansion=HOB&format=PremierDraft`, 188 cards):
-- `game_count` per card: min 0, median **366**, max 2,673.
-- Only **32 of 188 cards (17%)** have a non-null `ever_drawn_win_rate` (GIH WR) — 17Lands itself withholds the stat below its own minimum-sample threshold for the rest.
-- Only 77/188 have a non-null `win_rate` (GP WR).
+**Cause of the error.** The figures came from
+`https://www.17lands.com/card_ratings/data?expansion=HOB&format=<...>`. That URL still
+returns HTTP 200, but it is a **legacy shim**: it silently ignores its filter parameters
+(requests with `colors=WU`, `colors=BR`, `colors=GW`, `deck_colors=`, `color_filter=` and
+with date bounds all return *byte-identical* 122,132-byte payloads) and it reports only a
+small slice of the data. The endpoint the site actually calls today is
+`https://www.17lands.com/api/card_data?expansion=HOB&event_type=<Format>&time_period=ALL_TIME`
+— note `/api/`, `event_type` rather than `format`, a required `time_period`, and a
+`{copyright, notes, data}` envelope rather than a bare array.
 
-**Traditional Draft** (same endpoint, `format=TradDraft`, 188 cards):
-- `game_count` per card: min 0, median **77**, max 759 — roughly 5× thinner than Premier.
-- **0 of 188 cards have a non-null `ever_drawn_win_rate`.** 17Lands has not published GIH WR for *any* card in Traditional Draft for this set yet.
+**Corrected figures**, measured against the current endpoint on 2026-09-15:
 
-**Color/archetype ratings** look much healthier in aggregate — the Premier Draft two-color-pair table alone sums to hundreds of thousands of games (e.g. one query returned 282,358 "two-color" games combined) — because archetype rates aggregate across all cards and all drafts, whereas a single card's GIH WR needs that specific card drawn in a game.
+| | legacy shim (original finding) | current endpoint |
+|---|---|---|
+| **Premier Draft** — total game count | 111,355 | **12,070,970** |
+| **Premier Draft** — cards with GIH WR | 32–33 / 188 (17%) | **184 / 188 (98%)** |
+| **Premier Draft** — median games/card | 366 | **39,705** |
+| **Traditional Draft** — cards with GIH WR | **0 / 188** | **168 / 188 (89%)** |
+| **Traditional Draft** — median games/card | 77 | **5,909** |
 
-**Path B (public bulk CSVs)** — also live, confirming Path A and giving a size signal:
-- `https://17lands-public.s3.amazonaws.com/analysis_data/draft_data/draft_data_public.HOB.PremierDraft.csv.gz` → HTTP 200, **56.6 MB**, `Last-Modified: 2026-09-03`.
-- `https://17lands-public.s3.amazonaws.com/analysis_data/draft_data/draft_data_public.HOB.TradDraft.csv.gz` → HTTP 200, **5.6 MB**, `Last-Modified: 2026-09-03`.
-- The ~10× size gap between formats matches the card-level `game_count` gap above — Traditional Draft has meaningfully less data than Premier Draft for this set.
+**HOB is a well-covered set.** Independently confirmed by computing the rates ourselves
+from the public datasets: 184 of 193 cards clear a 500-game floor, averaging ~15,000 games
+each, and the format average lands at 56.3% across 227,258 two-colour games — which matches
+the "format average 56.0" that ADR 0003's worked example assumes.
 
-**Implication for ADR 0003 §2.2's bands:** with card-level `game_count` medians in the hundreds (Premier) or tens (Traditional), and most `min_games` (start: 1,000) thresholds unmet, expect most HOB picks today to land in `insufficient_data` or the widened `optimal`/`defensible` bands per the σ-scaling table — this is "correct behaviour, not a bug" per the ADR, but worth knowing before building/demoing against this set specifically. Traditional Draft in particular currently has **no usable GIH WR at all** at the card level; anything built against HOB TradDraft archetype-scoped stats right now would be working from color-pair aggregates only, not card-level signal.
+**Consequences for the two conclusions that depended on this:**
+
+- **ADR 0003's bands will operate normally.** The original "expect most HOB picks to land in
+  `insufficient_data`" warning does not hold and should be disregarded.
+- **Traditional Draft is viable.** It was ruled out here *because* it reportedly had 0%
+  card-level GIH WR coverage. It has 89%. Premier Draft remains the chosen format — it still
+  has roughly 6× the data and is already ingested and validated — but that is now a
+  preference, not a forced move.
+
+**Still true from the original measurement:** Premier Draft has meaningfully more data than
+Traditional Draft, and the ~10× public-dump size gap (56.6 MB vs 5.6 MB, both
+`Last-Modified: 2026-09-03`) reflects a real difference in volume. Only the absolute
+magnitudes and the "no TradDraft data" claim were wrong.
+
+**A further finding that supersedes this section's premise:** the aggregate endpoints are
+not ours to use at all. Their response body states the data is "only for use on
+17Lands.com" and that the only data permitted for outside use is
+[the public datasets](https://www.17lands.com/public_datasets) (CC BY 4.0); the
+[usage guidelines](https://www.17lands.com/usage_guidelines) discourage automated scraping,
+require a visible top-level citation, and ask third-party tools to hold off on a new set
+until its 12th day on Arena. So `development_plan.md` §2.3's "Path A" is off the table for
+BoosterTutor as well as the prototype, and Path B is the route for both.
 
 ## 4. Aggregate-endpoint URL/parameters (confirmed by direct request, not network-tab inspection)
 
@@ -80,5 +114,5 @@ Not confirmed: rate limits, required headers beyond `User-Agent`, and whether th
 
 1. **Scryfall code:** `hob` only (single code, no bonus sheet — `hoc`/`thob` are separate non-bonus-sheet companion products).
 2. **17Lands availability:** yes, for both Premier Draft and Traditional Draft, at card-rating and color-rating granularity; public S3 CSVs also live for both formats.
-3. **Freshness:** thin. Premier Draft: median ~366 games/card, GIH WR published for only 17% of cards. Traditional Draft: median ~77 games/card, **GIH WR published for 0% of cards**. Expect most picks to fall in `insufficient_data`/`optimal`/`defensible` bands per ADR 0003 §2.2.
+3. **Freshness: not thin** (corrected 2026-09-15 — see §3). Premier Draft: median **39,705** games/card, GIH WR for **184/188**. Traditional Draft: median **5,909**, GIH WR for **168/188**. ADR 0003's bands will operate normally. The original figures came from a legacy endpoint returning a small slice.
 4. **Endpoint shape:** `card_ratings/data?expansion=HOB&format=<Format>` and `color_ratings/data?expansion=HOB&event_type=<Format>&start_date=&end_date=` both confirmed live; exact default-window behavior of the latter not fully pinned down and should be re-verified via a real Network-tab capture before ingestion code depends on it.
