@@ -68,3 +68,15 @@ _Avoid_: weight, multiplier, synergy score
 A tag pair whose payoff needs a fixed count of enablers and gains nothing
 beyond it, as opposed to one that rewards each additional enabler.
 _Avoid_: capped synergy, binary synergy
+
+**Subsumption**:
+A structural is-a relationship between two tags, such as `treasure` being an
+`artifact`. Unlike a tag pair it carries no coefficient and can never be
+cyclic: it states what a tag always is, not what it is worth.
+_Avoid_: inheritance, parent tag, hierarchy edge
+
+**Tag Closure**:
+Every tag a card carries once subsumption has been expanded — a Treasure-maker
+closes over `treasure`, `artifact` and `historic`. Closure is computed when a
+card is tagged, so scoring only ever compares tags directly.
+_Avoid_: expanded tags, effective tags, resolved tags
