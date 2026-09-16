@@ -59,9 +59,18 @@ _Avoid_: provides, provider, source
 A card that rewards a resource or condition being present in the deck.
 _Avoid_: wants, wanter, needs
 
+**Self-Payoff**:
+A tag that synergises only with itself, for a card that rewards having more
+copies of that same card in the deck. Normally a vocabulary of one card and
+named after it (`seven_dwarves`). Its coefficient sits on the diagonal of the
+tag pair grid — the pairing of the tag with itself — and prices what each
+further copy is worth to the copies already there. See ADR 0004.
+_Avoid_: self-synergy, stacking tag, multiples tag
+
 **Tag Pair**:
 One enabler tag coupled to one payoff tag, carrying the importance coefficient
-that prices that synergy. A card may carry many tags of both kinds.
+that prices that synergy. A card may carry many tags of both kinds. A
+self-payoff is the one case where the two halves are the same tag.
 _Avoid_: synergy pair, combo
 
 **Importance Coefficient**:
@@ -71,5 +80,6 @@ _Avoid_: weight, multiplier, synergy score
 
 **Threshold Synergy**:
 A tag pair whose payoff needs a fixed count of enablers and gains nothing
-beyond it, as opposed to one that rewards each additional enabler.
+beyond it, as opposed to one that rewards each additional enabler. Independent
+of [Self-Payoff](#tags), which rewards every additional copy by definition.
 _Avoid_: capped synergy, binary synergy
