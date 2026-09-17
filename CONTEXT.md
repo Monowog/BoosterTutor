@@ -30,10 +30,28 @@ A card's value to a specific pool at a specific point in a draft, measured in
 percentage points of win rate.
 _Avoid_: score, rating, grade
 
+**Fitness Class**:
+The band a card in a pack falls into, from the gap between its fitness and the
+highest fitness in that pack: `solid`, `defensible` or `questionable`. Every
+card in a pack has one, including the cards not taken. See ADR 0005.
+_Avoid_: classification, rating, grade, standing, optimal, mistake
+
 **Verdict**:
-The band a pick falls into once its fitness gap is compared against the noise in
-the underlying data.
-_Avoid_: grade, judgement
+The band a pick falls into. Normally the fitness class of the card taken; the
+exception is `unimportant`, a pick where the pack offered nothing worth
+choosing between, so no class applies.
+_Avoid_: grade, judgement, classification
+
+**Relevant Pick**:
+A pick that earns a written explanation: its verdict is `questionable`, or it
+is flagged speculative. All other picks are stated, not explained.
+_Avoid_: interesting pick, flagged pick, bad pick
+
+**Speculative**:
+A flag on a pick where a strong card was taken off-colour in the first half of
+the draft, to keep options open. Speculative picks are relevant picks and are
+expected to be `defensible` at worst.
+_Avoid_: hedge pick, off-colour pick, hate pick
 
 ### Tags
 
