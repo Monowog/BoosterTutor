@@ -95,9 +95,3 @@ _Avoid_: synergy pair, combo
 The weight given to a single tag pair, expressing how much an enabler is
 actually worth to its payoff in this set.
 _Avoid_: weight, multiplier, synergy score
-
-**Threshold Synergy**:
-A tag pair whose payoff needs a fixed count of enablers and gains nothing
-beyond it, as opposed to one that rewards each additional enabler. Independent
-of [Self-Payoff](#tags), which rewards every additional copy by definition.
-_Avoid_: capped synergy, binary synergy
