@@ -1,6 +1,6 @@
 # ADR 0007 — Predicted archetype, class floors and the removal tag
 
-**Status:** Proposed · **Date:** 2026-09-18 · **Supersedes:** ADR 0003 §1.2 (the belief distribution), parts of ADR 0003 §1.4 (role counting) and ADR 0005 §1–2 (class and unimportant rules) · **Relates to:** ADR 0006 (synergy), the BIG_FIX_#1 design note
+**Status:** Proposed · **Date:** 2026-09-18 · **Supersedes:** ADR 0003 §1.2 (the belief distribution), parts of ADR 0003 §1.4 (role counting) and ADR 0005 §1–2 (class and indifferent rules) · **Relates to:** ADR 0006 (synergy), the BIG_FIX_#1 design note
 
 ---
 
@@ -12,7 +12,7 @@ belief distribution hard to reason about — ten pairs, a softmax temperature,
 a card-conditioned prior whose "exactly the unconditioned rate at λ = 0"
 promise turned out to be false with real scoped data (#31) — and the
 class rules too generous: a flat pack of filler produced `solid` picks, and
-a pack with a clearly good card could still come out `unimportant`.
+a pack with a clearly good card could still come out `indifferent`.
 
 ## Decision
 
@@ -37,11 +37,23 @@ base = (1 − λ) · overall
 ```
 
 `colour_fit = base − overall` is therefore exactly 0 at the start of a draft
-and whenever the pool has not chosen a lane. `tau` is removed from the
+and whenever the pool has not chosen a lane. **While λ = 0 there is no
+predicted archetype anywhere** — not in the UI, not for off-colour, not for
+the speculative flag.
+
+**The off-colour discount tapers with presence.** Replacement is not a
+cliff: the discount an off-colour card takes is scaled by
+`max(0, 1 − share(missing colour) / share(second archetype colour))`, where
+a colour's share is its fraction of the pool's coloured picks (gold cards
+count once per colour; colourless cards and basics are out of the
+denominator). With 3 U, 5 B, 5 R in a BR pool, a blue card takes 40% of the
+discount, a white card all of it, and a colour as present as the second
+colour takes none. A gold card missing two colours uses the weaker share,
+since both would have to be splashed. Off-colour status itself stays binary. `tau` is removed from the
 tunables. **Off-colour** has one definition everywhere: not playable in the
 predicted archetype (never off-colour when there is none; colourless cards
 never are). It drives the `speculative` flag, option value, and the
-unimportant veto below.
+indifferent veto below.
 
 ### 2. Role counts on-colour copies; removal is a tag
 
@@ -58,18 +70,29 @@ A card is `solid` only if its gap to the pack's best is within the noise
 floor **and** its fitness is at or above the format average. Gaps stay
 pack-relative; the floor is not. A flat pack of 54s has no solid card.
 
-### 4. `unimportant` is vetoed by anything worth having
+### 4. `indifferent` (was `unimportant`): same class, nothing off-colour
 
-A pick is never `unimportant` when the pack holds a `solid` card, or an
-on-colour card at or above replacement fitness. The single-card last-pick
-rule stands: one card is always `unimportant`, solid or not. The remaining
-ADR 0005 §2 conditions apply only after those vetoes.
+The verdict formerly called `unimportant` is renamed **`indifferent`**
+everywhere. A pick is `indifferent` when the pack holds one card (a last
+pick, solid or not), or nothing scorable. Otherwise it is never
+`indifferent` when the pack holds a `solid` card, or an on-colour card at
+or above replacement fitness; failing those vetoes, it is `indifferent`
+exactly when every scored card shares one fitness class and none of them
+is off-colour. ADR 0005 §2's thin-data and splash-worthy conditions are
+dropped. Basic lands, never scored, are ignored by the test.
 
-### 5. Admin mode
+### 5. Openness only for playable cards
+
+The openness term (ADR 0003 §1.5 as amended) applies only to cards whose
+overall GIH WR is at or above replacement. A below-replacement card
+wheeling late is not a signal worth pp.
+
+### 6. Admin mode
 
 Every scored card carries its full decomposition (`CardView.breakdown`:
 total, GIH WR, colour fit, curve, role, openness, synergy, option value,
-top-2 synergy firings). The review shows it in a popup on right-click. In
+top-2 synergy firings). The review shows it in a popup on right-click. In the expanded pool view,
+basic lands always sit under "Likely Unplayed". In
 DraftDouble anyone may see it; in BoosterTutor the API omits `breakdown`
 for non-admin users and the UI gates the popup on an admin claim (#32).
 
