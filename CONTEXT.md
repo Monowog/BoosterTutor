@@ -32,9 +32,9 @@ _Avoid_: score, rating, grade
 
 **Fitness Class**:
 The band a card in a pack falls into, from the gap between its fitness and the
-highest fitness in that pack: `solid`, `defensible` or `questionable`. Every
+highest fitness in that pack: `solid`, `reasonable` or `questionable`. Every
 card in a pack has one, including the cards not taken. See ADR 0005.
-_Avoid_: classification, rating, grade, standing, optimal, mistake
+_Avoid_: classification, rating, grade, standing, optimal, mistake, defensible
 
 **Verdict**:
 The band a pick falls into. Normally the fitness class of the card taken; the
@@ -50,7 +50,7 @@ _Avoid_: interesting pick, flagged pick, bad pick
 **Speculative**:
 A flag on a pick where a strong card was taken off-colour in the first half of
 the draft, to keep options open. Speculative picks are relevant picks and are
-expected to be `defensible` at worst.
+expected to be `reasonable` at worst.
 _Avoid_: hedge pick, off-colour pick, hate pick
 
 ### Tags

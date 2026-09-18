@@ -7,13 +7,13 @@
 ## Context
 
 ADR 0003 turned a fitness gap into one of five verdicts (`insufficient_data`,
-`optimal`, `defensible`, `questionable`, `mistake`) and then applied a
+`optimal`, `reasonable`, `questionable`, `mistake`) and then applied a
 post-hoc "downgrade" when an early off-colour bomb was taken. Designing the
 Draft Review UI against it surfaced four problems:
 
 1. **The names were wrong for the product.** "Optimal" over-claims for a gap
    that is merely within noise, "mistake" is the scolding tone the prompt rules
-   forbid, and the product notes had used Solid / Defensible / Questionable
+   forbid, and the product notes had used Solid / Reasonable / Questionable
    for a year.
 2. **Only the pick had a band.** The UI needs a band for *every* card in the
    pack, so a drafter can see which alternatives were also fine. The verdict is
@@ -36,7 +36,7 @@ gap(card) = max_fitness(pack) - fitness(card)     # pp, always >= 0
 | Fitness class | Condition |
 |---|---|
 | `solid` | `gap` within the noise floor (ADR 0003 §2.1, unchanged) |
-| `defensible` | `gap < X` |
+| `reasonable` | `gap < X` |
 | `questionable` | `gap >= X` |
 
 `X` is a set-level tunable, not yet chosen; it is one of the numbers the
@@ -74,7 +74,7 @@ is added to the fitness function as a term in pp, scaled by `(1 − λ)` like
 openness, so that the gap shrinks on its own and no second classing step is
 needed. The `speculative` flag is set only when a card is off-colour, taken in
 the first half of the draft, and above a GIH WR threshold; a weak off-colour
-card never earns it. Such picks are expected to land `defensible` at worst.
+card never earns it. Such picks are expected to land `reasonable` at worst.
 That is an expectation to check in the backtest, **not** a rule in the
 classer: class stays a pure function of the gap.
 
