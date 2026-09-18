@@ -141,15 +141,22 @@ def role(card, pool, t, cfg) -> float:
 The signal term: is this colour actually flowing? Strongest early, so it scales with `(1 − λ)`.
 
 ```python
-def openness(card, pack, t, stats, cfg) -> float:
+def openness(card, pick, t, stats, cfg) -> float:
     lam = commitment(t, cfg)
-    expected_pick = stats.alsa(card)          # where this card usually gets taken
-    lateness = expected_pick - current_position(pack, t)
+    alsa = stats.alsa(card)                   # the pick at which this card is usually gone
+    lateness = pick - alsa                    # picks the card is still here PAST its ALSA
     raw = cfg.openness_weight * lateness      # openness_weight ≈ 0.25pp per pick of lateness
-    return (1 - lam) * clamp(raw, -cfg.openness_cap, cfg.openness_cap)   # cap ≈ 1.5pp
+    return (1 - lam) * clamp(raw, 0.0, cfg.openness_cap)   # cap ≈ 1.5pp; never negative
 ```
 
 Capped hard, because it is the term most likely to be noise. A card sitting five picks past its ALSA is real evidence; a card one pick past it is nothing.
+
+**Amended 2026-09-18** ([#29](https://github.com/Monowog/BoosterTutor/issues/29)), two corrections found while implementing this term in DraftDouble:
+
+1. **The sign.** The original wrote `lateness = expected_pick − current_position`, which is backwards relative to the sentence above it and to what ALSA (Average Last Seen At) means. A card that usually disappears by pick 2 and is in front of you at pick 7 is *five picks late*, and that is `7 − 2`, not `2 − 7`. Lateness is now `pick − ALSA`.
+2. **The clamp is one-sided.** The original clamped to `[−cap, +cap]`, so a card seen *earlier* than its ALSA got a penalty. That has an unintended consequence at the start of a pack: at pick 1 every card is "early" (`1 − ALSA` is negative for all of them), and least early for the cards that are usually taken first. Low ALSA correlates with high win rate, so the term became a capped bonus for good-in-general cards — a second helping of card quality, not information about the table. On a real HOB draft P1P1's best card changed on this term alone. Openness now clamps to `[0, cap]`: it can only add, and only when a card is genuinely late. A card seen earlier than usual is normal, not a signal.
+
+Neither change touches the tunables; `openness_weight` and `openness_cap` remain as listed in §3.5.
 
 ### 1.6 The decomposition is the output
 
