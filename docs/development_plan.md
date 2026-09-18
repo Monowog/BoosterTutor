@@ -534,7 +534,7 @@ This is the intellectual core of the product. For each of the 45 picks, compute:
 - **Wheel analysis:** for pack 1 picks 1–7, you know what was in the pack when it came back around at picks 9–15. Which cards wheeled? A high-GIH-WR card wheeling is a loud signal that its color is open. This is a genuinely strong piece of coaching that Python can compute exactly and that a language model could never infer on its own.
 - **Lateness of good cards:** compare each card's position in the pack against its ALSA. A card appearing much later than its ALSA means that colour is flowing.
 
-**Verdict, computed not generated.** Classify each pick against thresholds you define — for example: delta ≤ 0.5pp = `optimal`; 0.5–2pp = `defensible`; 2–4pp = `questionable`; > 4pp = `mistake`. Then adjust for context: taking a slightly worse card that is strongly on-colour when you are already committed is *correct*, and your rules should say so. Write these rules down in `docs/decisions/0003-pick-grading.md`, tune them against drafts you know well, and keep them in Python. The model will *explain* the verdict; it will not decide it.
+**Verdict, computed not generated.** Classify each pick against thresholds you define — for example: delta ≤ 0.5pp = `optimal`; 0.5–2pp = `reasonable`; 2–4pp = `questionable`; > 4pp = `mistake`. Then adjust for context: taking a slightly worse card that is strongly on-colour when you are already committed is *correct*, and your rules should say so. Write these rules down in `docs/decisions/0003-pick-grading.md`, tune them against drafts you know well, and keep them in Python. The model will *explain* the verdict; it will not decide it.
 
 ### 3.4 The deterministic analysis — Deck
 

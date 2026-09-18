@@ -208,20 +208,20 @@ Every threshold is the larger of an absolute gap and a multiple of σ, so thin d
 |---|---|
 | `insufficient_data` | either card below `min_games` (start: 1,000) |
 | `optimal` | `gap < max(0.5, 1.0σ)` |
-| `defensible` | `gap < max(2.0, 1.5σ)` |
+| `reasonable` | `gap < max(2.0, 1.5σ)` |
 | `questionable` | `gap < max(4.0, 2.0σ)` |
 | `mistake` | otherwise |
 
 What that means in practice, for two cards both around 55%:
 
-| Games each | σ | `optimal` below | `defensible` below | `questionable` below |
+| Games each | σ | `optimal` below | `reasonable` below | `questionable` below |
 |---|---|---|---|---|
 | 1,000 | 2.22pp | 2.22 | 3.34 | 4.45 |
 | 2,000 | 1.57pp | 1.57 | 2.36 | 4.00 |
 | 5,000 | 0.99pp | 0.99 | 2.00 | 4.00 |
 | 20,000 | 0.50pp | 0.50 | 2.00 | 4.00 |
 
-Read the top row carefully: in a set's first week, when nothing has 2,000 games behind it, almost every pick lands in `optimal` or `defensible` and the app has very little to say. **That is correct behaviour, not a bug** — we genuinely do not know yet. Surface it in the UI ("early data for this set; grades will sharpen") rather than manufacturing confidence.
+Read the top row carefully: in a set's first week, when nothing has 2,000 games behind it, almost every pick lands in `optimal` or `reasonable` and the app has very little to say. **That is correct behaviour, not a bug** — we genuinely do not know yet. Surface it in the UI ("early data for this set; grades will sharpen") rather than manufacturing confidence.
 
 ### 2.3 The speculation override
 
@@ -235,7 +235,7 @@ if (t <= cfg.spec_window                                    # early, ~pick 8
     flags.append("speculative_first_pick")
 ```
 
-The flag reaches the prompt, so the blurb can acknowledge the reasoning — "a defensible speculative pick; the cost is that you were already six cards into Boros" — rather than scolding. Hate-drafting and information the log doesn't contain are handled the same way: prefer "defensible" over "wrong" whenever a competent player could have had a reason.
+The flag reaches the prompt, so the blurb can acknowledge the reasoning — "a reasonable speculative pick; the cost is that you were already six cards into Boros" — rather than scolding. Hate-drafting and information the log doesn't contain are handled the same way: prefer "reasonable" over "wrong" whenever a competent player could have had a reason.
 
 ### 2.4 Aggregate, because that's where the coaching is
 
