@@ -81,13 +81,24 @@ exactly when every scored card shares one fitness class and none of them
 is off-colour. ADR 0005 §2's thin-data and splash-worthy conditions are
 dropped. Basic lands, never scored, are ignored by the test.
 
-### 5. Openness only for playable cards
+### 5. Hybrid cards are dual-monocoloured
+
+Scryfall marks a `{B/R}` card as gold, but for playability it is a black
+card *or* a red card. Each card carries its **colour options** — the
+alternative colour sets that can pay its front face: `{B/R}` → `B` or `R`,
+`{B}{R}` → `BR`, `{1}{B}{B/R}` → `B`, `{2/W}` → generic, `{B/P}` → `B`. A
+card is playable in a pair when any option fits inside it; off-colour and
+the taper read the same options (a hybrid tapers by its better-represented
+colour). Pool colour counts still use Scryfall's colours, so a hybrid votes
+for both colours, like a gold card. HOB has eleven hybrid cards.
+
+### 6. Openness only for playable cards
 
 The openness term (ADR 0003 §1.5 as amended) applies only to cards whose
 overall GIH WR is at or above replacement. A below-replacement card
 wheeling late is not a signal worth pp.
 
-### 6. Admin mode
+### 7. Admin mode
 
 Every scored card carries its full decomposition (`CardView.breakdown`:
 total, GIH WR, colour fit, curve, role, openness, synergy, option value,
