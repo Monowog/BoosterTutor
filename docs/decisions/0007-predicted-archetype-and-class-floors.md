@@ -49,7 +49,18 @@ count once per colour; colourless cards and basics are out of the
 denominator). With 3 U, 5 B, 5 R in a BR pool, a blue card takes 40% of the
 discount, a white card all of it, and a colour as present as the second
 colour takes none. A gold card missing two colours uses the weaker share,
-since both would have to be splashed. Off-colour status itself stays binary. `tau` is removed from the
+since both would have to be splashed. Off-colour status itself stays binary.
+
+**And it never reaches zero.** The discount scales
+`max(off_colour_min_penalty, overall − replacement)`, not just the part of
+a card's rate above replacement, so a card that is *already* below
+replacement still pays for being unplayable instead of escaping the colour
+term for being bad. The two branches meet at `replacement +
+off_colour_min_penalty`, so the curve is continuous, monotonic, and never
+raises a card toward replacement. `off_colour_min_penalty` is a placeholder
+at 2.0pp. Note this is a fitness penalty only: classes stay pack-relative,
+so in a pack where everything is weak such a card can still class
+`reasonable`. `tau` is removed from the
 tunables. **Off-colour** has one definition everywhere: not playable in the
 predicted archetype (never off-colour when there is none; colourless cards
 never are). It drives the `speculative` flag, option value, and the
