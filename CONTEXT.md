@@ -38,9 +38,16 @@ _Avoid_: classification, rating, grade, standing, optimal, mistake, defensible
 
 **Verdict**:
 The band a pick falls into. Normally the fitness class of the card taken; the
-exception is `unimportant`, a pick where the pack offered nothing worth
-choosing between, so no class applies.
-_Avoid_: grade, judgement, classification
+exception is `indifferent`, a pick where the pack offered nothing worth
+choosing between and nothing worth having, so no class applies. See ADR 0007.
+_Avoid_: grade, judgement, classification, unimportant
+
+**Predicted Archetype**:
+The one two-colour pair the pool is heading toward, read off pick counts per
+colour: the top two colours, and only when both are unambiguous. None on a
+tie, a mono-colour lead, or while the commitment ramp is at zero. The only
+pair whose data the fitness function consults. See ADR 0007.
+_Avoid_: leading colours, lane, belief
 
 **Relevant Pick**:
 A pick that earns a written explanation: its verdict is `questionable`, or it
