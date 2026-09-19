@@ -106,8 +106,10 @@ The weight given to a single tag pair, expressing how much an enabler is
 actually worth to its payoff in this set.
 _Avoid_: weight, multiplier, synergy score
 
-**Threshold Synergy**:
-A tag pair whose payoff needs a fixed count of enablers and gains nothing
-beyond it, as opposed to one that rewards each additional enabler. Independent
-of [Self-Payoff](#tags), which rewards every additional copy by definition.
-_Avoid_: capped synergy, binary synergy
+**Decay Coefficient**:
+The second weight on a tag pair, from 0 to 1, saying how much of the previous
+copy's value each further copy of the complementary tag is worth. 1 means no
+decay and every copy counts in full; 0.5, the default, converges on twice the
+importance coefficient; 0 means only the first copy counts at all. See ADR
+0009.
+_Avoid_: cap, saturation, falloff, threshold synergy
