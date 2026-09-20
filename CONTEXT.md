@@ -32,15 +32,23 @@ _Avoid_: score, rating, grade
 
 **Fitness Class**:
 The band a card in a pack falls into, from the gap between its fitness and the
-highest fitness in that pack: `solid`, `reasonable` or `questionable`. Every
-card in a pack has one, including the cards not taken. See ADR 0005.
-_Avoid_: classification, rating, grade, standing, optimal, mistake, defensible
+highest fitness in that pack: `solid` within 2pp, `questionable` within 4pp,
+`mistake` beyond. Fixed thresholds in percentage points, with no noise floor
+and no absolute floor, so the best card in a weak pack is still `solid`. Every
+card in a pack has one, including the cards not taken. See ADR 0008.
+_Avoid_: classification, rating, grade, standing, optimal, defensible, reasonable
 
 **Verdict**:
 The band a pick falls into. Normally the fitness class of the card taken; the
-exception is `indifferent`, a pick where the pack offered nothing worth
-choosing between and nothing worth having, so no class applies. See ADR 0007.
+exception is `indifferent`, a pick where the pack offered no choice worth
+making, so no class applies. See ADR 0008.
 _Avoid_: grade, judgement, classification, unimportant
+
+**Indifferent**:
+A pick where nothing was at stake: the pack held one card, held nothing
+scorable, or every card in it was `solid`, so no available choice cost the
+deck any equity. Taking a basic land is never indifferent. See ADR 0008.
+_Avoid_: unimportant, neutral, skip
 
 **Predicted Archetype**:
 The one two-colour pair the pool is heading toward, read off pick counts per
@@ -50,15 +58,10 @@ pair whose data the fitness function consults. See ADR 0007.
 _Avoid_: leading colours, lane, belief
 
 **Relevant Pick**:
-A pick that earns a written explanation: its verdict is `questionable`, or it
-is flagged speculative. All other picks are stated, not explained.
+A pick that earns a written explanation: its verdict is `mistake`. All other
+picks are stated, not explained, and a draft with none at all is a good
+draft. See ADR 0008.
 _Avoid_: interesting pick, flagged pick, bad pick
-
-**Speculative**:
-A flag on a pick where a strong card was taken off-colour in the first half of
-the draft, to keep options open. Speculative picks are relevant picks and are
-expected to be `reasonable` at worst.
-_Avoid_: hedge pick, off-colour pick, hate pick
 
 ### Tags
 
