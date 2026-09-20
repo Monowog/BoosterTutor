@@ -46,6 +46,8 @@ Starting values: `ramp_start = 4`, `ramp_span = 18`. So λ is 0 through P1P4, ri
 
 ### 1.2 Base — conditioned card quality
 
+> **Superseded in part.** ADR 0007 replaced the belief distribution with a single predicted archetype. ADR 0011 then normalized the archetype-scoped rate against that archetype's own win rate, because a scoped rate carries the pair's strength as well as the card's fit with it.
+
 This is the important idea, and it replaces the hand-tuned "off-colour penalty" entirely.
 
 Rather than scoring a card in the abstract and subtracting a penalty for being off-colour, we hold a **belief distribution over the ten two-colour archetypes** and score the card as an expectation across it. Early in the draft the belief is flat, so the score is close to raw card quality. Late in the draft it collapses onto one or two archetypes, and a card that isn't playable in them scores at replacement level automatically — no penalty coefficient required.
@@ -101,6 +103,8 @@ Note what falls out of this for free: **archetype-scoped GIH WR is our synergy l
 
 ### 1.3 Curve
 
+> **Amended by ADR 0010 (2026-09-19):** lands are excluded from this term on both sides — a land neither fills a curve slot nor has a curve of its own — which also matches how `target_curve` was derived. The example targets below are folklore; the measured ones are in DraftDouble's `docs/target-curve.md`.
+
 Only matters once there's a deck shape to disturb, so it scales with λ:
 
 ```python
@@ -118,6 +122,8 @@ def curve(card, pool, t, cfg) -> float:
 `curve_weight ≈ 0.75pp`. Deliberately small: curve matters, but it does not outrank a two-point card-quality difference, and a function that says otherwise will give bad advice. Derive `target_curve` from the public dataset — what the curves of winning decks in *this* format actually look like — rather than from folklore.
 
 ### 1.4 Role
+
+> **Amended by ADR 0010 (2026-09-19):** `role_weight` splits into `removal_weight` 1.25pp and `creature_weight` 0.40pp, so removal is worth about three times a body; the removal branch therefore exceeds the 1pp ceiling this section implies, as ADR 0005 predicted it would need to. Both targets are now measured from winning decks rather than guessed, and removal is the hand-authored `_removal_` tag alone (ADR 0007 §2).
 
 Same shape, applied to removal and creature counts against format-specific targets:
 
