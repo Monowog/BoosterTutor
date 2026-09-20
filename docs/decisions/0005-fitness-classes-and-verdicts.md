@@ -2,6 +2,8 @@
 
 **Status:** Proposed · **Date:** 2026-09-17 · **Supersedes:** ADR 0003 §2.2 (bands) and §2.3 (speculation override). ADR 0003 §1 (the fitness function) and §3 (backtest) stand.
 
+> **Amended by ADR 0007 (2026-09-18):** `unimportant` is renamed `indifferent`; §1 gains a format-average floor for `solid`; §2's conditions are replaced by vetoes plus a same-class rule. The text below is kept as written.
+
 ---
 
 ## Context
