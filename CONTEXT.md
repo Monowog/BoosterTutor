@@ -50,12 +50,41 @@ scorable, or every card in it was `solid`, so no available choice cost the
 deck any equity. Taking a basic land is never indifferent. See ADR 0008.
 _Avoid_: unimportant, neutral, skip
 
+**Archetype Float**:
+For one archetype, the share of the pool's coloured cards that archetype
+could play. Ten of them, one per pair; they overlap, so they do not sum to
+one. Colourless cards and basic lands are outside the measure entirely.
+See ADR 0012.
+_Avoid_: probability, belief, weight
+
 **Predicted Archetype**:
-The one two-colour pair the pool is heading toward, read off pick counts per
-colour: the top two colours, and only when both are unambiguous. None on a
-tie, a mono-colour lead, or while the commitment ramp is at zero. The only
-pair whose data the fitness function consults. See ADR 0007.
+The one two-colour pair the pool is heading toward: the pair with the
+highest archetype float. None only when no pair can play anything at all.
+One definition, shared by the fitness function, the deck-shape terms, the
+UI and the brief. See ADR 0012.
 _Avoid_: leading colours, lane, belief
+
+**Colour Tax**:
+What a card's fitness loses for not being what the pool is buying: the gap
+between the highest archetype float and the highest float of any archetype
+that card could be played in, priced in percentage points and scaled by the
+commitment ramp. Never negative, and a matter of degree rather than a
+binary on/off. See ADR 0012.
+_Avoid_: colour fit penalty, off-colour, mismatch
+
+**ALSA**:
+Average Last Seen At: the pick by which a card has usually gone from a pack,
+averaged over every pack it appeared in. A measure of what drafters believe
+a card is worth, not of what it is worth. Low for bombs, and also for rares
+taken early for collection value.
+_Avoid_: pick order, average pick, ATA
+
+**Openness**:
+Evidence that a colour is under-drafted at this table, in percentage points:
+what a card earns for still being in the pack later than its ALSA. Paid only
+for cards worth playing, at a rate that falls as the ALSA rises, and only
+while there is draft left to steer. See ADR 0014.
+_Avoid_: lateness, wheeling, signal
 
 **Relevant Pick**:
 A pick that earns a written explanation: its verdict is `mistake`. All other
