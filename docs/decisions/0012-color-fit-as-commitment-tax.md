@@ -114,6 +114,48 @@ The **argmax float pair** is the predicted archetype everywhere — fitness,
 `None`, so the tie dropouts disappear. `target_creatures` and
 `target_removal` keep counting whole cards and are **not** re-derived.
 
+### 6. Lands (amended 2026-09-22)
+
+ADR 0012 as first written had nothing to say about lands, which left them in
+an incoherent position: Scryfall gives a land no colour, so a dual land was
+playable in every pair and paid **no tax in any pool**, while also being
+excluded from the floats only by accident of that same empty `colors` field.
+
+**A land's playable colours come from its colour identity, read as hybrid.**
+One option per colour, so Goblin-town (BR) is playable in any pair holding
+black or red. Hybrid rather than gold, because the two are genuinely
+different: a `{B}{R}` spell in a BG deck is uncastable, whereas Goblin-town
+in a BG deck taps for black and goes straight in. It generalises upward — a
+WUB tri-land in a UB deck taps for two of your colours, so it suits more
+decks than a dual, not fewer — and it keeps the magnitude sane, since gold
+treatment would price an off-colour land at the full `tax_value`, three
+times `mistake_gap`.
+
+**Colour identity, not produced mana, is the definition** — deliberately,
+not as a convenience. A land whose only relevant ability costs `{B}` is
+black-exclusive in practice even though it taps for nothing coloured, and
+identity is what captures that. `produced_mana` would be the wrong source
+here, so there is nothing to revisit.
+
+**Every land is excluded from the archetype floats, whatever its colours.** A
+dual land is evidence that you are *open to* a pair, not that you are in it,
+and lands get taken for fixing and for want of anything better. This was
+already true incidentally, because the float filter keys on `colors` and
+lands have none — but Magic prints coloured lands (Dryad Arbor is a green
+Land Creature), so the exclusion now keys on the `land` tag and does not
+depend on that accident.
+
+The rule lives in `analysis/` as `playable_colors(card)`, which defers to
+`color_options()` for anything that is not a land, so every playability rule
+stays in the pure, exhaustively tested module.
+
+**On HOB this affects six cards.** Five duals — Lake-town (WU), Goblin-town
+(BR), Iron Hills (WR), Mirkwood (BG), Elvenking's Halls (UG), a half-cycle —
+plus The Lonely Mountain, a mono-red nonbasic taken at ALSA 3.00 on a 58.1
+GIH WR, the strongest land in the set and previously untaxed everywhere.
+Elven Passage and Hobbit Hole have no colour identity and stay untaxed.
+Basic lands are never scored at all.
+
 ## Consequences
 
 **Good.** The tax is continuous in the pool: it reads float *values*, not the
