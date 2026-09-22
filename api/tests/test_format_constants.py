@@ -34,7 +34,7 @@ def test_it_carries_every_format_level_constant() -> None:
 
 def test_the_curve_is_six_columns_one_per_mana_value() -> None:
     """Structure, not data: the curve term clamps mana value to 1..6."""
-    curve = [c for c in TABLE.columns.keys() if c.startswith("target_curve_")]
+    curve = [c.name for c in TABLE.columns if c.name.startswith("target_curve_")]
     assert sorted(curve) == [f"target_curve_{mv}" for mv in range(1, 7)]
 
 
