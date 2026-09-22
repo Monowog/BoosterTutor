@@ -64,6 +64,14 @@ One definition, shared by the fitness function, the deck-shape terms, the
 UI and the brief. See ADR 0012.
 _Avoid_: leading colours, lane, belief
 
+**Colour Options**:
+The colour sets a card can be *played* in, each written in sorted WUBRG form.
+For a spell, what can pay its cost: a hybrid card has one option per colour,
+a gold card a single option holding both. For a land, what it serves — its
+colour identity, read the same way a hybrid card is. A colourless card has
+one empty option and fits everywhere. See ADR 0007 §5 and ADR 0012 §6.
+_Avoid_: castable colours, colour requirements, pips
+
 **Colour Tax**:
 What a card's fitness loses for not being what the pool is buying: the gap
 between the highest archetype float and the highest float of any archetype
