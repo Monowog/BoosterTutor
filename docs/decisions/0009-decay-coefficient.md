@@ -94,6 +94,34 @@ converging on twice its coefficient. And `d = 1` is deliberately unbounded,
 so a mis-set edge can still run away; `synergy_cap` (ADR 0006 §5, 5pp)
 remains the global backstop for that.
 
+**Observed since (2026-09-22).** The worked example above describes the
+0.5 default, which is still what a new edge gets. It is no longer what that
+edge carries: `historic → storied` was hand-tuned to **0.9**, and nine of
+HOB's sixteen edges have moved off the default, eight of them upward.
+
+So the example now reads differently. At coefficient 0.1:
+
+| enablers in pool | d = 0.5 | d = 0.9 |
+|---|---|---|
+| 1 | 0.100pp | 0.100pp |
+| 2 | 0.150pp | 0.190pp |
+| 3 | 0.175pp | 0.271pp |
+| 6 | 0.197pp | **0.469pp** |
+| 15 | 0.200pp | **0.794pp** |
+| limit | 0.20pp | **1.00pp** |
+
+The six-enabler case the ADR quotes at 0.20pp is 0.469pp today, and the edge
+converges on ten times its coefficient rather than twice. A real firing
+observed on the WR reference draft — Óin the Brave, `storied ← historic`
+with fifteen enablers in the pool — pays 0.794pp.
+
+This does not change the decision: one number still spans "every copy
+counts" to "only the first does", and the default is still 0.5. But it does
+weaken the ADR's "runaway synergy is bounded by construction" claim in
+practice. The bound at d = 0.9 is ten coefficients, and `synergy_cap`
+(ADR 0006 §5, 5pp) is doing more of the work than this ADR assumed. Worth
+watching as more edges are tuned upward.
+
 **Revisit when:** the backtest can fit per-edge decays from data, or if a
 set needs a payoff that is genuinely inert below some count, which this
 design still does not express (ADR 0006's rejected hard knee).
